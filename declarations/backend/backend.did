@@ -1,0 +1,340 @@
+type http_request_result = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type http_header = 
+ record {
+   name: text;
+   value: text;
+ };
+type __CAFFEINE_STORAGE_RefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type __CAFFEINE_STORAGE_RefillInformation = record {
+                                              proposed_top_up_amount: opt nat;
+                                            };
+type ValidationResult = 
+ record {
+   errors: vec text;
+   isValid: bool;
+   rowIndex: nat;
+ };
+type UserStats = 
+ record {
+   newUsersLast24h: nat;
+   newUsersLast30d: nat;
+   newUsersLast7d: nat;
+   totalUsers: nat;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfile = 
+ record {
+   name: text;
+   paymentProof: opt PaymentProof;
+   paymentStatus: PaymentStatus;
+   registrationTime: int;
+ };
+type UserApprovalInfo = 
+ record {
+   "principal": principal;
+   status: ApprovalStatus;
+ };
+type UserActivity = 
+ record {
+   commentCount: nat;
+   lastLogin: int;
+   loginCount: nat;
+   questionAttempts: nat;
+   user: principal;
+ };
+type TransformationOutput = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type TransformationInput = 
+ record {
+   context: blob;
+   response: http_request_result;
+ };
+type StudyStatistics = 
+ record {
+   aggregateStats: AggregateStats;
+   practiceModeStats: ModeStats;
+   reviewModeStats: ModeStats;
+   timedModeStats: ModeStats;
+ };
+type StudyMode = 
+ variant {
+   practice;
+   review;
+   timed;
+ };
+type StudentProgress = 
+ record {
+   accuracy: float64;
+   badges: vec text;
+   completedQuestions: nat;
+   correctAnswers: nat;
+   streak: nat;
+   totalAttempts: nat;
+   weakAreas: vec text;
+ };
+type StripeSessionStatus = 
+ variant {
+   completed: record {
+                response: text;
+                userPrincipal: opt text;
+              };
+   failed: record {error: text;};
+ };
+type StripeConfiguration = 
+ record {
+   allowedCountries: vec text;
+   secretKey: text;
+ };
+type ShoppingItem = 
+ record {
+   currency: text;
+   priceInCents: nat;
+   productDescription: text;
+   productName: text;
+   quantity: nat;
+ };
+type QuestionType = 
+ variant {
+   multiSelect;
+   numeric;
+   singleChoice;
+   trueFalse;
+ };
+type QuestionState = 
+ variant {
+   archived;
+   draft;
+   published;
+ };
+type Question = 
+ record {
+   content: text;
+   correctAnswers: vec nat;
+   createdAt: int;
+   domain: text;
+   explanation: text;
+   id: text;
+   options: vec text;
+   questionType: QuestionType;
+   state: QuestionState;
+   updatedAt: int;
+   version: nat;
+ };
+type PaymentStatus = 
+ variant {
+   active;
+   expired;
+   pending;
+ };
+type PaymentRecord = 
+ record {
+   amount: nat;
+   createdAt: int;
+   id: text;
+   method: PaymentMethod;
+   proof: opt PaymentProof;
+   status: PaymentStatus;
+   updatedAt: int;
+   user: principal;
+ };
+type PaymentProof = 
+ record {
+   filePath: text;
+   fileType: text;
+   uploadedAt: int;
+ };
+type PaymentMethod = 
+ variant {
+   localBank;
+   stcBank;
+ };
+type PaymentConfiguration = 
+ record {
+   localBankDetails: opt text;
+   stcPayBarcodePath: opt text;
+   updatedAt: int;
+ };
+type ModeStats = 
+ record {
+   accuracyPercentage: float64;
+   questionsAttempted: nat;
+   questionsCorrect: nat;
+   sessionsCompleted: nat;
+   timeSpent: int;
+ };
+type FileReference = 
+ record {
+   hash: text;
+   path: text;
+ };
+type DomainTopicType = 
+ variant {
+   domain;
+   topic;
+ };
+type DomainTopic = 
+ record {
+   createdAt: int;
+   id: text;
+   name: text;
+   "type": DomainTopicType;
+   updatedAt: int;
+ };
+type CsvPreview = 
+ record {
+   delimiter: text;
+   headers: vec text;
+   rows: vec vec text;
+   validationResults: vec ValidationResult;
+ };
+type CsvImportResult = 
+ record {
+   errors: vec text;
+   importedCount: nat;
+   message: text;
+   success: bool;
+ };
+type Comment = 
+ record {
+   approved: bool;
+   content: text;
+   createdAt: int;
+   id: text;
+   questionId: text;
+   user: principal;
+ };
+type BrandAssets = 
+ record {
+   logoPath: opt text;
+   soundPath: opt text;
+   updatedAt: int;
+ };
+type Bookmark = 
+ record {
+   createdAt: int;
+   questionId: text;
+   user: principal;
+ };
+type ApprovalStatus = 
+ variant {
+   approved;
+   pending;
+   rejected;
+ };
+type AggregateStats = 
+ record {
+   overallAccuracy: float64;
+   totalQuestionsAttempted: nat;
+   totalQuestionsCorrect: nat;
+   totalSessionsCompleted: nat;
+   totalTimeSpent: int;
+ };
+service : {
+  __CAFFEINE_STORAGE_blobsRemoved: (hashes: vec text) -> (nat);
+  __CAFFEINE_STORAGE_blobsToRemove: () -> (vec text);
+  __CAFFEINE_STORAGE_refillCashier: (refill_information:
+   opt __CAFFEINE_STORAGE_RefillInformation) ->
+   (__CAFFEINE_STORAGE_RefillResult);
+  __CAFFEINE_STORAGE_updateGatewayPrincipals: () -> ();
+  addBookmark: (questionId: text) -> ();
+  addComment: (comment: Comment) -> ();
+  addDomainTopic: (id: text, name: text, "type": DomainTopicType) -> ();
+  addPaymentRecord: ("record": PaymentRecord) -> ();
+  addQuestion: (question: Question) -> ();
+  approveComment: (commentId: text) -> ();
+  approvePayment: (paymentRecordId: text) -> ();
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  cancelCsvPreview: (previewId: text) -> ();
+  createCheckoutSession: (items: vec ShoppingItem, successUrl: text,
+   cancelUrl: text) -> (text);
+  deleteComment: (commentId: text) -> ();
+  deleteCsvPreview: (previewId: text) -> ();
+  deleteDomainTopic: (id: text) -> ();
+  deleteQuestion: (questionId: text) -> ();
+  dropFileReference: (path: text) -> ();
+  getAllDomainsAndTopics: () -> (vec DomainTopic) query;
+  getAllQuestions: () -> (vec Question) query;
+  getAllUsers: () -> (vec record {
+                            principal;
+                            UserProfile;
+                          }) query;
+  getBookmarks: () -> (vec Bookmark) query;
+  getBrandAssets: () -> (opt BrandAssets) query;
+  getCallerUserProfile: () -> (opt UserProfile) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getComments: () -> (vec Comment) query;
+  getCsvPreview: (previewId: text) -> (CsvPreview) query;
+  getCsvPreviewDelimiter: (previewId: text) -> (text) query;
+  getCsvPreviewHeaders: (previewId: text) -> (vec text) query;
+  getCsvPreviewRows: (previewId: text) -> (vec vec text) query;
+  getCsvPreviewValidationResults: (previewId: text) ->
+   (vec ValidationResult) query;
+  getDomainTopics: () -> (vec DomainTopic) query;
+  getDomains: () -> (vec DomainTopic) query;
+  getFileReference: (path: text) -> (FileReference) query;
+  getPaymentConfiguration: () -> (opt PaymentConfiguration) query;
+  getPaymentRecords: () -> (vec PaymentRecord) query;
+  getQuestions: () -> (vec Question) query;
+  getQuestionsByFilter: (domain: opt text, difficulty: opt text) ->
+   (vec Question) query;
+  getQuestionsByMode: (mode: StudyMode) -> (vec Question) query;
+  getStripeSessionStatus: (sessionId: text) -> (StripeSessionStatus);
+  getStudentProgress: () -> (opt StudentProgress) query;
+  getStudyStatistics: () -> (opt StudyStatistics) query;
+  getUserActivities: () -> (vec UserActivity) query;
+  getUserProfile: (user: principal) -> (opt UserProfile) query;
+  getUserStats: () -> (UserStats) query;
+  initializeAccessControl: () -> ();
+  initializeDomains: () -> ();
+  isCallerAdmin: () -> (bool) query;
+  isCallerApproved: () -> (bool) query;
+  isStripeConfigured: () -> (bool) query;
+  listApprovals: () -> (vec UserApprovalInfo) query;
+  listFileReferences: () -> (vec FileReference) query;
+  processCsvPreview: (previewId: text) -> (CsvImportResult);
+  registerFileReference: (path: text, hash: text) -> ();
+  removeBookmark: (questionId: text) -> ();
+  requestApproval: () -> ();
+  saveCallerUserProfile: (profile: UserProfile) -> ();
+  saveCsvPreview: (previewId: text, preview: CsvPreview) -> ();
+  saveStudentProgress: (progress: StudentProgress) -> ();
+  saveStudyStatistics: (stats: StudyStatistics) -> ();
+  searchQuestions: (searchTerm: text) -> (vec Question) query;
+  setApproval: (user: principal, status: ApprovalStatus) -> ();
+  setStripeConfiguration: (config: StripeConfiguration) -> ();
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  updateBrandAssets: (logoPath: opt text, soundPath: opt text) -> ();
+  updateCsvPreviewDelimiter: (previewId: text, newDelimiter: text) -> ();
+  updateCsvPreviewHeaders: (previewId: text, newHeaders: vec text) -> ();
+  updateCsvPreviewRows: (previewId: text, newRows: vec vec text) -> ();
+  updateCsvPreviewValidationResults: (previewId: text, newValidationResults:
+   vec ValidationResult) -> ();
+  updateDomainTopic: (id: text, newName: text) -> ();
+  updatePaymentConfiguration: (stcPayBarcodePath: opt text, localBankDetails:
+   opt text) -> ();
+  updatePaymentRecord: ("record": PaymentRecord) -> ();
+  updateQuestion: (question: Question) -> ();
+  updateUserActivity: (loginCount: nat, questionAttempts: nat, commentCount:
+   nat, lastLogin: int) -> ();
+  uploadPaymentProof: (paymentRecordId: text, filePath: text, fileType:
+   text) -> ();
+  validateCsvPreviewDelimiter: (previewId: text) -> (bool);
+}
