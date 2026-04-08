@@ -1,0 +1,177 @@
+// Version: 1.0.0
+type AggregateStats__893985510 =
+  {
+    overallAccuracy : Float;
+    totalQuestionsAttempted : Nat;
+    totalQuestionsCorrect : Nat;
+    totalSessionsCompleted : Nat;
+    totalTimeSpent : Int
+  };
+type AiAssistantConfig__410257634 =
+  {apiKey : Text; enabled : Bool; lastUpdated : Int};
+type Bookmark__624217893 =
+  {createdAt : Int; questionId : Text; user : Principal};
+type BrandAssets__346950155 =
+  {logoPath : ?Text; soundPath : ?Text; updatedAt : Int};
+type Comment__473346131 =
+  {
+    approved : Bool;
+    content : Text;
+    createdAt : Int;
+    id : Text;
+    questionId : Text;
+    user : Principal
+  };
+type CsvPreview__905490134 =
+  {
+    delimiter : Text;
+    headers : [Text];
+    importMode : ?ImportMode__1055760896;
+    rows : [[Text]];
+    validationResults : [ValidationResult__196223862]
+  };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Domain__637745097 = {createdAt : Int; id : Text; name : Text};
+type ImportMode__1055760896 = {#other; #questions; #users};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type ModeStats__695954599 =
+  {
+    accuracyPercentage : Float;
+    questionsAttempted : Nat;
+    questionsCorrect : Nat;
+    sessionsCompleted : Nat;
+    timeSpent : Int
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type PaymentConfiguration__826037849 =
+  {localBankDetails : ?Text; stcPayBarcodePath : ?Text; updatedAt : Int};
+type PaymentMethod__68978920 = {#localBank; #stcBank};
+type PaymentProof__351160515 =
+  {filePath : Text; fileType : Text; uploadedAt : Int};
+type PaymentRecord__216844392 =
+  {
+    amount : Nat;
+    createdAt : Int;
+    id : Text;
+    method : PaymentMethod__68978920;
+    proof : ?PaymentProof__351160515;
+    status : PaymentStatus__876794400;
+    updatedAt : Int;
+    user : Principal
+  };
+type PaymentStatus__876794400 = {#active; #expired; #pending};
+type QuestionState__703854403 = {#archived; #draft; #published};
+type QuestionType__433468977 =
+  {#multiSelect; #numeric; #singleChoice; #trueFalse};
+type Question__879138514 =
+  {
+    content : Text;
+    correctAnswers : [Nat];
+    createdAt : Int;
+    domain : Text;
+    explanation : Text;
+    id : Text;
+    options : [Text];
+    questionType : QuestionType__433468977;
+    state : QuestionState__703854403;
+    updatedAt : Int;
+    version : Nat
+  };
+type StudentProgress__338689733 =
+  {
+    accuracy : Float;
+    badges : [Text];
+    completedQuestions : Nat;
+    correctAnswers : Nat;
+    streak : Nat;
+    totalAttempts : Nat;
+    weakAreas : [Text]
+  };
+type StudyStatistics__393387123 =
+  {
+    aggregateStats : AggregateStats__893985510;
+    practiceModeStats : ModeStats__695954599;
+    reviewModeStats : ModeStats__695954599;
+    timedModeStats : ModeStats__695954599
+  };
+type UserActivity__642776294 =
+  {
+    commentCount : Nat;
+    lastLogin : Int;
+    loginCount : Nat;
+    questionAttempts : Nat;
+    user : Principal
+  };
+type UserProfile__491224006 =
+  {
+    name : Text;
+    paymentProof : ?PaymentProof__351160515;
+    paymentStatus : PaymentStatus__876794400;
+    registrationTime : Int
+  };
+type UserRole__599675725 = {#admin; #guest; #user};
+type ValidationResult__196223862 =
+  {errors : [Text]; isValid : Bool; rowIndex : Nat};
+actor {
+  stable var aiAssistantConfig : ?AiAssistantConfig__410257634;
+  stable bookmarks :
+    {
+      var root : Node__46230540<Text, Bookmark__624217893>;
+      var size : Nat__490723111
+    };
+  stable var brandAssets : ?BrandAssets__346950155;
+  stable comments :
+    {
+      var root : Node__46230540<Text, Comment__473346131>;
+      var size : Nat__490723111
+    };
+  stable csvPreviews :
+    {
+      var root : Node__46230540<Text, CsvPreview__905490134>;
+      var size : Nat__490723111
+    };
+  stable var firstUserInitialized : Bool;
+  stable fixedDomains : [Domain__637745097];
+  stable var paymentConfiguration : ?PaymentConfiguration__826037849;
+  stable paymentRecords :
+    {
+      var root : Node__46230540<Text, PaymentRecord__216844392>;
+      var size : Nat__490723111
+    };
+  stable questions :
+    {
+      var root : Node__46230540<Text, Question__879138514>;
+      var size : Nat__490723111
+    };
+  stable studentProgress :
+    {
+      var root : Node__46230540<Principal, StudentProgress__338689733>;
+      var size : Nat__490723111
+    };
+  stable studyStatistics :
+    {
+      var root : Node__46230540<Principal, StudyStatistics__393387123>;
+      var size : Nat__490723111
+    };
+  stable userActivities :
+    {
+      var root : Node__46230540<Principal, UserActivity__642776294>;
+      var size : Nat__490723111
+    };
+  stable userProfiles :
+    {
+      var root : Node__46230540<Principal, UserProfile__491224006>;
+      var size : Nat__490723111
+    };
+  stable userRoles :
+    {
+      var root : Node__46230540<Principal, UserRole__599675725>;
+      var size : Nat__490723111
+    }
+};

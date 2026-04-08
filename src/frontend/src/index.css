@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+    --background: 0.98 0.01 106.42;
+    --foreground: 0.15 0.02 258.75;
+    --card: 1 0 0;
+    --card-foreground: 0.15 0.02 258.75;
+    --popover: 1 0 0;
+    --popover-foreground: 0.15 0.02 258.75;
+    --primary: 0.45 0.18 258.75;
+    --primary-foreground: 0.98 0.01 106.42;
+    --secondary: 0.96 0.02 258.75;
+    --secondary-foreground: 0.15 0.02 258.75;
+    --muted: 0.96 0.02 258.75;
+    --muted-foreground: 0.55 0.08 258.75;
+    --accent: 0.94 0.03 258.75;
+    --accent-foreground: 0.15 0.02 258.75;
+    --destructive: 0.62 0.22 29.23;
+    --destructive-foreground: 0.98 0.01 106.42;
+    --border: 0.92 0.02 258.75;
+    --input: 0.92 0.02 258.75;
+    --ring: 0.45 0.18 258.75;
+    --chart-1: 0.55 0.15 142.5;
+    --chart-2: 0.65 0.18 258.75;
+    --chart-3: 0.75 0.12 35.8;
+    --chart-4: 0.45 0.22 312.5;
+    --chart-5: 0.85 0.08 85.2;
+    --sidebar: 0.98 0.01 106.42;
+    --sidebar-foreground: 0.15 0.02 258.75;
+    --sidebar-primary: 0.45 0.18 258.75;
+    --sidebar-primary-foreground: 0.98 0.01 106.42;
+    --sidebar-accent: 0.96 0.02 258.75;
+    --sidebar-accent-foreground: 0.15 0.02 258.75;
+    --sidebar-border: 0.92 0.02 258.75;
+    --sidebar-ring: 0.45 0.18 258.75;
+  }
+
+  .dark {
+    --background: 0.08 0.02 258.75;
+    --foreground: 0.95 0.01 106.42;
+    --card: 0.12 0.02 258.75;
+    --card-foreground: 0.95 0.01 106.42;
+    --popover: 0.12 0.02 258.75;
+    --popover-foreground: 0.95 0.01 106.42;
+    --primary: 0.65 0.18 258.75;
+    --primary-foreground: 0.08 0.02 258.75;
+    --secondary: 0.18 0.02 258.75;
+    --secondary-foreground: 0.95 0.01 106.42;
+    --muted: 0.18 0.02 258.75;
+    --muted-foreground: 0.65 0.08 258.75;
+    --accent: 0.22 0.03 258.75;
+    --accent-foreground: 0.95 0.01 106.42;
+    --destructive: 0.68 0.22 29.23;
+    --destructive-foreground: 0.08 0.02 258.75;
+    --border: 0.22 0.02 258.75;
+    --input: 0.22 0.02 258.75;
+    --ring: 0.65 0.18 258.75;
+    --chart-1: 0.45 0.15 142.5;
+    --chart-2: 0.55 0.18 258.75;
+    --chart-3: 0.65 0.12 35.8;
+    --chart-4: 0.35 0.22 312.5;
+    --chart-5: 0.75 0.08 85.2;
+    --sidebar: 0.12 0.02 258.75;
+    --sidebar-foreground: 0.95 0.01 106.42;
+    --sidebar-primary: 0.65 0.18 258.75;
+    --sidebar-primary-foreground: 0.08 0.02 258.75;
+    --sidebar-accent: 0.18 0.02 258.75;
+    --sidebar-accent-foreground: 0.95 0.01 106.42;
+    --sidebar-border: 0.22 0.02 258.75;
+    --sidebar-ring: 0.65 0.18 258.75;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom styles for medical education theme */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth transitions for interactive elements */
+.transition-colors {
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Enhanced focus styles for accessibility */
+.focus-visible\:ring-2:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px oklch(var(--ring));
+}
+
+/* Custom scrollbar for better UX */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: oklch(var(--muted));
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: oklch(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: oklch(var(--muted-foreground) / 0.5);
+}
+
+/* Landing page specific animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Gradient text effect */
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    oklch(var(--primary)),
+    oklch(var(--secondary))
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Enhanced button hover effects */
+.btn-primary-enhanced {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-enhanced::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.btn-primary-enhanced:hover::before {
+  left: 100%;
+}
+
+/* Mobile-first responsive design enhancements */
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2.5rem;
+    line-height: 1.1;
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: 4.5rem;
+    line-height: 1.1;
+  }
+
+  .hero-description {
+    font-size: 1.5rem;
+    line-height: 1.5;
+  }
+}

@@ -1,0 +1,274 @@
+type ValidationResult = 
+ record {
+   errors: vec text;
+   isValid: bool;
+   rowIndex: nat;
+ };
+type UserStats = 
+ record {
+   newUsersLast24h: nat;
+   newUsersLast30d: nat;
+   newUsersLast7d: nat;
+   totalUsers: nat;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfile = 
+ record {
+   name: text;
+   paymentProof: opt PaymentProof;
+   paymentStatus: PaymentStatus;
+   registrationTime: int;
+ };
+type UserActivity = 
+ record {
+   commentCount: nat;
+   lastLogin: int;
+   loginCount: nat;
+   questionAttempts: nat;
+   user: principal;
+ };
+type StudyStatistics = 
+ record {
+   aggregateStats: AggregateStats;
+   practiceModeStats: ModeStats;
+   reviewModeStats: ModeStats;
+   timedModeStats: ModeStats;
+ };
+type StudyMode = 
+ variant {
+   practice;
+   review;
+   timed;
+ };
+type StudentProgress = 
+ record {
+   accuracy: float64;
+   badges: vec text;
+   completedQuestions: nat;
+   correctAnswers: nat;
+   streak: nat;
+   totalAttempts: nat;
+   weakAreas: vec text;
+ };
+type QuestionType = 
+ variant {
+   multiSelect;
+   numeric;
+   singleChoice;
+   trueFalse;
+ };
+type QuestionState = 
+ variant {
+   archived;
+   draft;
+   published;
+ };
+type Question = 
+ record {
+   content: text;
+   correctAnswers: vec nat;
+   createdAt: int;
+   domain: text;
+   explanation: text;
+   id: text;
+   options: vec text;
+   questionType: QuestionType;
+   state: QuestionState;
+   updatedAt: int;
+   version: nat;
+ };
+type PaymentStatus = 
+ variant {
+   active;
+   expired;
+   pending;
+ };
+type PaymentRecord = 
+ record {
+   amount: nat;
+   createdAt: int;
+   id: text;
+   method: PaymentMethod;
+   proof: opt PaymentProof;
+   status: PaymentStatus;
+   updatedAt: int;
+   user: principal;
+ };
+type PaymentProof = 
+ record {
+   filePath: text;
+   fileType: text;
+   uploadedAt: int;
+ };
+type PaymentMethod = 
+ variant {
+   localBank;
+   stcBank;
+ };
+type PaymentConfiguration = 
+ record {
+   localBankDetails: opt text;
+   stcPayBarcodePath: opt text;
+   updatedAt: int;
+ };
+type ModeStats = 
+ record {
+   accuracyPercentage: float64;
+   questionsAttempted: nat;
+   questionsCorrect: nat;
+   sessionsCompleted: nat;
+   timeSpent: int;
+ };
+type ImportMode = 
+ variant {
+   other;
+   questions;
+   users;
+ };
+type Domain = 
+ record {
+   createdAt: int;
+   id: text;
+   name: text;
+ };
+type CsvPreview = 
+ record {
+   delimiter: text;
+   headers: vec text;
+   importMode: opt ImportMode;
+   rows: vec vec text;
+   validationResults: vec ValidationResult;
+ };
+type CsvImportResult = 
+ record {
+   errors: vec text;
+   importedCount: nat;
+   message: text;
+   success: bool;
+ };
+type Comment = 
+ record {
+   approved: bool;
+   content: text;
+   createdAt: int;
+   id: text;
+   questionId: text;
+   user: principal;
+ };
+type BrandAssets = 
+ record {
+   logoPath: opt text;
+   soundPath: opt text;
+   updatedAt: int;
+ };
+type Bookmark = 
+ record {
+   createdAt: int;
+   questionId: text;
+   user: principal;
+ };
+type AiChatRequest = record {messages: vec AiChatMessage;};
+type AiChatMessage = 
+ record {
+   content: text;
+   role: text;
+ };
+type AiAssistantConfig = 
+ record {
+   apiKey: text;
+   enabled: bool;
+   lastUpdated: int;
+ };
+type AggregateStats = 
+ record {
+   overallAccuracy: float64;
+   totalQuestionsAttempted: nat;
+   totalQuestionsCorrect: nat;
+   totalSessionsCompleted: nat;
+   totalTimeSpent: int;
+ };
+service : {
+  addBookmark: (questionId: text) -> ();
+  addComment: (comment: Comment) -> ();
+  addPaymentRecord: ("record": PaymentRecord) -> ();
+  addQuestion: (question: Question) -> ();
+  approveComment: (commentId: text) -> ();
+  approvePayment: (paymentRecordId: text) -> ();
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  cancelCsvPreview: (previewId: text) -> ();
+  deepSeekChat: (request: AiChatRequest) -> (text);
+  deleteAiAssistantConfig: () -> ();
+  deleteComment: (commentId: text) -> ();
+  deleteCsvPreview: (previewId: text) -> ();
+  deleteQuestion: (questionId: text) -> ();
+  getAiAssistantConfig: () -> (opt AiAssistantConfig) query;
+  getAllDomains: () -> (vec Domain) query;
+  getAllQuestions: () -> (vec Question) query;
+  getAllUsers: () -> (vec record {
+                            principal;
+                            UserProfile;
+                          }) query;
+  getBookmarks: () -> (vec Bookmark) query;
+  getBrandAssets: () -> (opt BrandAssets) query;
+  getCallerUserProfile: () -> (opt UserProfile) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getComments: () -> (vec Comment) query;
+  getCsvPreview: (previewId: text) -> (CsvPreview) query;
+  getCsvPreviewDelimiter: (previewId: text) -> (text) query;
+  getCsvPreviewHeaders: (previewId: text) -> (vec text) query;
+  getCsvPreviewRows: (previewId: text) -> (vec vec text) query;
+  getCsvPreviewValidationResults: (previewId: text) ->
+   (vec ValidationResult) query;
+  getDomains: () -> (vec Domain) query;
+  getOrphanQuestions: () -> (vec Question) query;
+  getPaymentConfiguration: () -> (opt PaymentConfiguration) query;
+  getPaymentRecords: () -> (vec PaymentRecord) query;
+  getQuestions: () -> (vec Question) query;
+  getQuestionsByFilter: (domain: opt text, difficulty: opt text) ->
+   (vec Question) query;
+  getQuestionsByMode: (mode: StudyMode) -> (vec Question) query;
+  getQuestionsWithDomains: () -> (vec Question) query;
+  getStudentProgress: () -> (opt StudentProgress) query;
+  getStudyStatistics: () -> (opt StudyStatistics) query;
+  getUserActivities: () -> (vec UserActivity) query;
+  getUserProfile: (user: principal) -> (opt UserProfile) query;
+  getUserStats: () -> (UserStats) query;
+  /// First user to call this becomes admin. Subsequent calls are no-ops.
+  initializeAccessControl: () -> ();
+  isAiAssistantEnabled: () -> (bool) query;
+  isCallerAdmin: () -> (bool) query;
+  /// Import questions from a CSV preview.
+  /// Expected row columns: id | content | options (pipe-separated) | correctAnswer (0-based Nat) | explanation | _ | domain
+  processCsvPreview: (previewId: text) -> (CsvImportResult);
+  /// Register the caller as a user (if not already assigned a role).
+  registerUser: (name: text) -> ();
+  removeBookmark: (questionId: text) -> ();
+  saveCallerUserProfile: (profile: UserProfile) -> ();
+  saveCsvPreview: (previewId: text, preview: CsvPreview) -> ();
+  saveStudentProgress: (progress: StudentProgress) -> ();
+  saveStudyStatistics: (stats: StudyStatistics) -> ();
+  searchQuestions: (searchTerm: text) -> (vec Question) query;
+  setAiAssistantConfig: (apiKey: text, enabled: bool) -> ();
+  updateBrandAssets: (logoPath: opt text, soundPath: opt text) -> ();
+  updateCsvPreviewDelimiter: (previewId: text, newDelimiter: text) -> ();
+  updateCsvPreviewHeaders: (previewId: text, newHeaders: vec text) -> ();
+  updateCsvPreviewImportMode: (previewId: text, newImportMode:
+   opt ImportMode) -> ();
+  updateCsvPreviewRows: (previewId: text, newRows: vec vec text) -> ();
+  updateCsvPreviewValidationResults: (previewId: text, newValidationResults:
+   vec ValidationResult) -> ();
+  updatePaymentConfiguration: (stcPayBarcodePath: opt text, localBankDetails:
+   opt text) -> ();
+  updatePaymentRecord: ("record": PaymentRecord) -> ();
+  updateQuestion: (question: Question) -> ();
+  updateUserActivity: (loginCount: nat, questionAttempts: nat, commentCount:
+   nat, lastLogin: int) -> ();
+  uploadPaymentProof: (paymentRecordId: text, filePath: text, fileType:
+   text) -> ();
+  validateCsvPreviewDelimiter: (previewId: text) -> (bool);
+}
